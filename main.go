@@ -43,6 +43,31 @@ type Config struct {
 	BotToken string
 }
 
+var (
+	Database *gorm.DB
+)
+
+var (
+	Come      = "/Пришел"
+	Go        = "/Ушел"
+	Show      = "/Показать за неделю"
+	ShowMonth = "/Показать за месяц"
+	Add       = "/Добавить долг"
+)
+
+var numericKeyboard = tgbotapi.NewReplyKeyboard(
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton(Come),
+		tgbotapi.NewKeyboardButton(Go),
+		tgbotapi.NewKeyboardButton(Add),
+	),
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton(Show),
+		tgbotapi.NewKeyboardButton(ShowMonth),
+
+	),
+)
+
 func ConfigNew() *Config {
 	_ = godotenv.Load()
 	return &Config{
@@ -63,17 +88,7 @@ func getEnv(key string, defaultVal string) string {
 	return defaultVal
 }
 
-var (
-	Database *gorm.DB
-)
 
-var (
-	Come      = "/Пришел"
-	Go        = "/Ушел"
-	Show      = "/Показать за неделю"
-	ShowMonth = "/Показать за месяц"
-	Add       = "/Добавить долг"
-)
 
 func InitDatabase(config *Config) (*gorm.DB, error) {
 	connect := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -96,6 +111,7 @@ func InitDatabase(config *Config) (*gorm.DB, error) {
 	return Database, nil
 
 }
+
 
 func main() {
 
@@ -125,6 +141,27 @@ func main() {
 
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 			msg.ReplyToMessageID = update.Message.MessageID
+
+			userId := update.Message.From.ID
+			switch update.Message.Command() {
+			case "start":
+				msg.ReplyMarkup = numericKeyboard
+				msg.Text = fmt.Sprint(userId)
+			case Come: 
+
+			msg.Text = fmt.Sprint(userId)
+
+			case Go:
+			
+				msg.Text = fmt.Sprint(userId)
+			case Show:
+			
+				msg.Text = fmt.Sprint(userId)
+			case Add:
+				msg.Text = fmt.Sprint(userId)
+			default:
+				msg.Text = "I don't know that command"
+			}
 			bot.Send(msg)
 		}
 	}
