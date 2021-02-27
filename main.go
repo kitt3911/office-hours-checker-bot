@@ -3,45 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"github.com/google/uuid"
-	"github.com/joho/godotenv"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/kitt3911/office-hours-checker-bot/config"
+	"github.com/kitt3911/office-hours-checker-bot/database"
+	"github.com/kitt3911/office-hours-checker-bot/model"
 )
-
-type Day struct {
-	ID        uuid.UUID `json:"id" gorm:"primaryKey"`
-	UserID    int       `json:"user_id"`
-	MonthID   uuid.UUID `json:"month_id"`
-	DayOfWeek string    `json:"day_od_week"`
-	Hours     float64   `json:"hours"`
-	Go        time.Time `json:"go_time"`
-	Come      time.Time `json:"come_time"`
-}
-
-type Month struct {
-	gorm.Model
-	ID       uuid.UUID `json:"id" gorm:"primaryKey"`
-	UserID   int       `json:"user_id"`
-	Days     []Day     `json:"weeks" gorm:"foreignKey:MonthID"`
-	SumHours int       `json:"sum_hours"`
-	Name     string    `json:"name_of_month"`
-}
-
-type DatabaseConfig struct {
-	User     string
-	Password string
-	Name     string
-}
-
-type Config struct {
-	DB       DatabaseConfig
-	BotToken string
-}
 
 var (
 	Come      = "come"
@@ -65,50 +34,10 @@ var numericKeyboard = tgbotapi.NewReplyKeyboard(
 	),
 )
 
-func ConfigNew() *Config {
-	_ = godotenv.Load()
-	return &Config{
-		DB: DatabaseConfig{
-			User:     getEnv("DB_USER", ""),
-			Password: getEnv("DB_PASS", ""),
-			Name:     getEnv("DB_NAME", ""),
-		},
-		BotToken: getEnv("BOT_TOKEN", ""),
-	}
-}
-
-func getEnv(key string, defaultVal string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-
-	return defaultVal
-}
-
-func InitDatabase(config *Config) (*gorm.DB, error) {
-	var database *gorm.DB
-	connect := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s",
-		"localhost", 5400, config.DB.User, config.DB.Password, config.DB.Name)
-
-	database, err := gorm.Open(postgres.Open(connect), &gorm.Config{})
-
-	database.Table("days").AutoMigrate(&Day{})
-	database.Table("months").AutoMigrate(&Month{})
-
-	database.Model(&Month{}).Association("days")
-	if err != nil {
-		return database, err
-	}
-
-	return database, nil
-
-}
-
 func main() {
 
-	config := ConfigNew()
-	database, err := InitDatabase(config)
+	config := config.ConfigNew()
+	database, err := database.InitDatabase(config)
 
 	if err != nil {
 		log.Fatalln(err)
@@ -129,7 +58,6 @@ func main() {
 		if update.CallbackQuery != nil {
 
 			bot.AnswerCallbackQuery(tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data))
-
 			bot.Send(tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Data))
 		}
 		if update.Message != nil {
@@ -139,8 +67,8 @@ func main() {
 
 			userId := update.Message.From.ID
 
-			var month Month
-			var day Day
+			var month model.Month
+			var day model.Day
 
 			switch update.Message.Command() {
 			case "start":
@@ -158,7 +86,7 @@ func main() {
 						database.Save(&day)
 
 					} else {
-						database.Create(&Day{
+						database.Create(&model.Day{
 							ID:        uuid.Must(uuid.NewRandom()),
 							UserID:    userId,
 							MonthID:   month.ID,
@@ -170,14 +98,14 @@ func main() {
 				} else {
 
 					uuidMonth := uuid.Must(uuid.NewRandom())
-					database.Create(&Month{
+					database.Create(&model.Month{
 						ID:       uuidMonth,
 						UserID:   userId,
 						SumHours: 0,
 						Name:     date.Month().String(),
 					})
 
-					database.Create(&Day{
+					database.Create(&model.Day{
 						ID:        uuid.Must(uuid.NewRandom()),
 						MonthID:   uuidMonth,
 						UserID:    userId,
@@ -194,7 +122,7 @@ func main() {
 				uuidMonth := uuid.Must(uuid.NewRandom())
 
 				if date.Day() == 1 {
-					database.Create(&Month{
+					database.Create(&model.Month{
 						ID:       uuidMonth,
 						UserID:   userId,
 						SumHours: 0,
@@ -213,7 +141,7 @@ func main() {
 					database.Save(&day)
 
 				} else {
-					database.Create(&Day{
+					database.Create(&model.Day{
 						ID:        uuid.Must(uuid.NewRandom()),
 						UserID:    userId,
 						MonthID:   month.ID,
@@ -235,7 +163,7 @@ func main() {
 				msg.Text = fmt.Sprint(day.Hours)
 			case Show:
 
-				var day []Day
+				var day []model.Day
 				var count int64
 				database.Find(&day).Count(&count)
 				msg.Text = fmt.Sprint(count)
