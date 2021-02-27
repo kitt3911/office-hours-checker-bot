@@ -15,30 +15,21 @@ import (
 
 type Day struct {
 	ID        uuid.UUID `json:"id" gorm:"primaryKey"`
-	UserID    int     `json:"user_id"`
-	WeekID    uuid.UUID `json:"week_id"`
-	DayOfWeek string  `json:"day_od_week"`
-	Date      string  `json:"date"`
-	Hours     int     `json:"hours"`
-	Minutes   int     `json:"minutes"`
-}
-
-type Week struct {
-	ID       uuid.UUID `json:"id" gorm:"primaryKey"`
-	MonthID  uuid.UUID `json:"month_id`
-	UserID   int     `json:"user_id"`
-	Days     []Day   `json:"days" gorm:"foreignKey:WeekID"`
-	SumHours int     `json:"sum_hours"`
-	Number   int     `json:"number"`
+	UserID    int       `json:"user_id"`
+	MonthID   uuid.UUID `json:"month_id"`
+	DayOfWeek string    `json:"day_od_week"`
+	Hours     float64   `json:"hours"`
+	Go        time.Time `json:"go_time"`
+	Come      time.Time `json:"come_time"`
 }
 
 type Month struct {
 	gorm.Model
 	ID       uuid.UUID `json:"id" gorm:"primaryKey"`
-	UserID   int     `json:"user_id"`
-	Weeks    []Week  `json:"weeks" gorm:"foreignKey:MonthID"`
-	SumHours int     `json:"sum_hours"`
-	Name     string  `json:"name_of_month"`
+	UserID   int       `json:"user_id"`
+	Days     []Day     `json:"weeks" gorm:"foreignKey:MonthID"`
+	SumHours int       `json:"sum_hours"`
+	Name     string    `json:"name_of_month"`
 }
 
 type DatabaseConfig struct {
@@ -53,24 +44,24 @@ type Config struct {
 }
 
 var (
-	Come      = "/Пришел"
-	Go        = "/Ушел"
-	Show      = "/Показать за неделю"
-	ShowMonth = "/Показать за месяц"
-	Edit      = "/Редактировать"
-	Delete    = "/Удалить"
+	Come      = "come"
+	Go        = "go"
+	Show      = "show"
+	ShowMonth = "show_month"
+	Edit      = "edit"
+	Delete    = "delete"
 )
 
 var numericKeyboard = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton(Come),
-		tgbotapi.NewKeyboardButton(Go),
+		tgbotapi.NewKeyboardButton("/"+Come),
+		tgbotapi.NewKeyboardButton("/"+Go),
 	),
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton(Show),
-		tgbotapi.NewKeyboardButton(ShowMonth),
-		tgbotapi.NewKeyboardButton(Delete),
-		tgbotapi.NewKeyboardButton(Edit),
+		tgbotapi.NewKeyboardButton("/"+Show),
+		tgbotapi.NewKeyboardButton("/"+ShowMonth),
+		tgbotapi.NewKeyboardButton("/"+Delete),
+		tgbotapi.NewKeyboardButton("/"+Edit),
 	),
 )
 
@@ -102,13 +93,10 @@ func InitDatabase(config *Config) (*gorm.DB, error) {
 
 	database, err := gorm.Open(postgres.Open(connect), &gorm.Config{})
 
-	database.Table("Days").AutoMigrate(&Day{})
-	database.Table("Weeks").AutoMigrate(&Week{})
-	database.Table("Months").AutoMigrate(&Month{})
+	database.Table("days").AutoMigrate(&Day{})
+	database.Table("months").AutoMigrate(&Month{})
 
-
-	database.Model(&Week{}).Association("Days")
-	database.Model(&Month{}).Association("Weeks")
+	database.Model(&Month{}).Association("days")
 	if err != nil {
 		return database, err
 	}
@@ -150,66 +138,107 @@ func main() {
 			msg.ReplyToMessageID = update.Message.MessageID
 
 			userId := update.Message.From.ID
+
+			var month Month
+			var day Day
+
 			switch update.Message.Command() {
 			case "start":
 				msg.ReplyMarkup = numericKeyboard
-				msg.Text = fmt.Sprint(userId)
 				date := time.Now()
-				uuidMonth := uuid.New()
-				uuidWeek := uuid.New()
-				database.Create(&Month{
-					ID:	uuidMonth,
-					UserID:   userId,
-					SumHours: 0,
-					Name:     date.Month().String(),
-				})
-				database.Create(&Week{
-					ID:	uuidWeek,
-					MonthID: uuidMonth,
-					UserID:   userId,
-					Number:   1,
-					SumHours: 0,
-				})
-			
-				database.Create(&Day{
-					ID: uuid.New(),
-					WeekID: uuidWeek,
-					UserID:    userId,
-					DayOfWeek: date.Weekday().String(),
-					Date:      date.String(),
-					Hours:     0,
-					Minutes:   0,
-				})
-				
-			case Come:
-				date := time.Now()
-				uuidWeek := uuid.New()
-				uuidMonth := uuid.New()
-				if date.Day() == 1 {
+
+				database.First(&month)
+				database.First(&day)
+
+				if month.Name == date.Month().String() {
+					dayTime := time.Time(day.Come)
+					if dayTime.Day() == date.Day() && dayTime.Month() == date.Month() {
+						day.Come = date
+						day.Hours = 0
+						database.Save(&day)
+
+					} else {
+						database.Create(&Day{
+							ID:        uuid.Must(uuid.NewRandom()),
+							UserID:    userId,
+							MonthID:   month.ID,
+							DayOfWeek: date.Weekday().String(),
+							Hours:     0,
+							Come:      date,
+						})
+					}
+				} else {
+
+					uuidMonth := uuid.Must(uuid.NewRandom())
 					database.Create(&Month{
-						ID:	uuidMonth,
+						ID:       uuidMonth,
 						UserID:   userId,
 						SumHours: 0,
 						Name:     date.Month().String(),
 					})
-					database.Create(&Week{
-						MonthID: uuidMonth,
-						UserID:   userId,
-						ID: uuidWeek,
-						Number:   1,
-						SumHours: 0,
+
+					database.Create(&Day{
+						ID:        uuid.Must(uuid.NewRandom()),
+						MonthID:   uuidMonth,
+						UserID:    userId,
+						DayOfWeek: date.Weekday().String(),
+						Hours:     0,
+						Come:      date,
 					})
 				}
-				
+
+				msg.Text = fmt.Sprint(month)
+
+			case Come:
+				date := time.Now()
+				uuidMonth := uuid.Must(uuid.NewRandom())
+
+				if date.Day() == 1 {
+					database.Create(&Month{
+						ID:       uuidMonth,
+						UserID:   userId,
+						SumHours: 0,
+						Name:     date.Month().String(),
+					})
+				}
+
+				database.First(&month)
+				database.First(&day)
+
+				dayTime := time.Time(day.Come)
+
+				if dayTime.Day() == date.Day() && dayTime.Month() == date.Month() {
+					day.Come = date
+					day.Hours = 0
+					database.Save(&day)
+
+				} else {
+					database.Create(&Day{
+						ID:        uuid.Must(uuid.NewRandom()),
+						UserID:    userId,
+						MonthID:   month.ID,
+						DayOfWeek: date.Weekday().String(),
+						Hours:     0,
+						Come:      date,
+					})
+				}
 
 				msg.Text = fmt.Sprint(userId)
 
 			case Go:
-
-				msg.Text = fmt.Sprint(userId)
+				date := time.Now()
+				database.First(&day)
+				workHour := date.Sub(day.Come)
+				day.Go = date
+				day.Hours = float64(workHour.Minutes()) / 60
+				database.Save(&day)
+				msg.Text = fmt.Sprint(day.Hours)
 			case Show:
 
-				msg.Text = fmt.Sprint(userId)
+				var day []Day
+				var count int64
+				database.Find(&day).Count(&count)
+				msg.Text = fmt.Sprint(count)
 			default:
 				msg.Text = "I don't know that command"
 			}
