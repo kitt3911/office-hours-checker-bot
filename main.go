@@ -13,12 +13,12 @@ import (
 )
 
 var (
-	Come      = "come"
-	Go        = "go"
-	Show      = "show"
-	ShowMonth = "show_month"
-	Edit      = "edit"
-	Delete    = "delete"
+	Come        = "come"
+	Go          = "go"
+	Show        = "show"
+	ShowAllInfo = "show_all_info"
+	Edit        = "edit"
+	Delete      = "delete"
 )
 
 var numericKeyboard = tgbotapi.NewReplyKeyboard(
@@ -28,7 +28,7 @@ var numericKeyboard = tgbotapi.NewReplyKeyboard(
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton("/"+Show),
-		tgbotapi.NewKeyboardButton("/"+ShowMonth),
+		tgbotapi.NewKeyboardButton("/"+ShowAllInfo),
 		tgbotapi.NewKeyboardButton("/"+Delete),
 		tgbotapi.NewKeyboardButton("/"+Edit),
 	),
@@ -47,7 +47,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	bot.Debug = true
+	//bot.Debug = true
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 	updates, err := bot.GetUpdatesChan(u)
@@ -75,14 +75,14 @@ func main() {
 				msg.ReplyMarkup = numericKeyboard
 				date := time.Now()
 
-				database.First(&month)
-				database.First(&day)
+				database.Last(&month)
+				database.Last(&day)
 
 				if month.Name == date.Month().String() {
 					dayTime := time.Time(day.Come)
 					if dayTime.Day() == date.Day() && dayTime.Month() == date.Month() {
 						day.Come = date
-						day.Hours = 0
+						day.Hours = float64(dayTime.Hour()) + day.Hours
 						database.Save(&day)
 
 					} else {
@@ -114,13 +114,11 @@ func main() {
 						Come:      date,
 					})
 				}
-
 				msg.Text = fmt.Sprint(month)
 
 			case Come:
 				date := time.Now()
 				uuidMonth := uuid.Must(uuid.NewRandom())
-
 				if date.Day() == 1 {
 					database.Create(&model.Month{
 						ID:       uuidMonth,
@@ -129,17 +127,15 @@ func main() {
 						Name:     date.Month().String(),
 					})
 				}
-
-				database.First(&month)
-				database.First(&day)
+				database.Last(&month)
+				database.Last(&day)
 
 				dayTime := time.Time(day.Come)
 
-				if dayTime.Day() == date.Day() && dayTime.Month() == date.Month() {
+				if dayTime.Day() == date.Day() && date.Month() == dayTime.Month() {
+					day.Hours = float64(day.Go.Hour())-float64(day.Come.Hour())
 					day.Come = date
-					day.Hours = 0
 					database.Save(&day)
-
 				} else {
 					database.Create(&model.Day{
 						ID:        uuid.Must(uuid.NewRandom()),
@@ -151,22 +147,38 @@ func main() {
 					})
 				}
 
-				msg.Text = fmt.Sprint(userId)
+				database.Last(&day)
+
+				msg.Text = fmt.Sprint(day)
 
 			case Go:
 				date := time.Now()
-				database.First(&day)
-				workHour := date.Sub(day.Come)
+				database.Last(&day)
 				day.Go = date
-				day.Hours = float64(workHour.Minutes()) / 60
+				day.Hours = float64(day.Go.Hour()) - float64(day.Come.Hour())
 				database.Save(&day)
 				msg.Text = fmt.Sprint(day.Hours)
-			case Show:
 
-				var day []model.Day
-				var count int64
-				database.Find(&day).Count(&count)
-				msg.Text = fmt.Sprint(count)
+			case ShowAllInfo:
+
+				database.Last(&month)
+				var days []model.Day
+
+				database.Find(&days, "month_id = ?", month.ID)
+
+				var outputStr string
+				outputStr = outputStr + "| Day \t  \t  \t| Hours|\n"
+				for _, item := range days {
+					dateFormate := item.Come.Format("2006-01-02")
+					outputStr = outputStr + fmt.Sprintf(`| %s		| %d|`, dateFormate, int(item.Hours)) + "\n"
+				}
+
+				msg.Text = fmt.Sprint(outputStr)
+
+			case Show:
+				database.Last(&day)
+				msg.Text = fmt.Sprint(day.Hours)
+
 			default:
 				msg.Text = "I don't know that command"
 			}
