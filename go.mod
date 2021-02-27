@@ -3,11 +3,13 @@ module github.com/kitt3911/office-hours-checker-bot
 go 1.14
 
 require (
-	github.com/Syfaro/telegram-bot-api v4.6.4+incompatible // indirect
+	github.com/Syfaro/telegram-bot-api v4.6.4+incompatible
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
+	github.com/gofrs/uuid v3.2.0+incompatible
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
 	github.com/jinzhu/gorm v1.9.16 // indirect
-	github.com/joho/godotenv v1.3.0 // indirect
+	github.com/joho/godotenv v1.3.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/text v0.3.5 // indirect
