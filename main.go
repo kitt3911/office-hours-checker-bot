@@ -6,10 +6,10 @@ import (
 	"time"
 
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"github.com/google/uuid"
 	"github.com/kitt3911/office-hours-checker-bot/config"
 	"github.com/kitt3911/office-hours-checker-bot/database"
 	"github.com/kitt3911/office-hours-checker-bot/model"
+	"github.com/kitt3911/office-hours-checker-bot/service"
 )
 
 var (
@@ -72,83 +72,14 @@ func main() {
 
 			switch update.Message.Command() {
 			case "start":
+
 				msg.ReplyMarkup = numericKeyboard
-				date := time.Now()
-
-				database.Last(&month)
-				database.Last(&day)
-
-				if month.Name == date.Month().String() {
-					dayTime := time.Time(day.Come)
-					if dayTime.Day() == date.Day() && dayTime.Month() == date.Month() {
-						day.Come = date
-						day.Hours = float64(dayTime.Hour()) + day.Hours
-						database.Save(&day)
-
-					} else {
-						database.Create(&model.Day{
-							ID:        uuid.Must(uuid.NewRandom()),
-							UserID:    userId,
-							MonthID:   month.ID,
-							DayOfWeek: date.Weekday().String(),
-							Hours:     0,
-							Come:      date,
-						})
-					}
-				} else {
-
-					uuidMonth := uuid.Must(uuid.NewRandom())
-					database.Create(&model.Month{
-						ID:       uuidMonth,
-						UserID:   userId,
-						SumHours: 0,
-						Name:     date.Month().String(),
-					})
-
-					database.Create(&model.Day{
-						ID:        uuid.Must(uuid.NewRandom()),
-						MonthID:   uuidMonth,
-						UserID:    userId,
-						DayOfWeek: date.Weekday().String(),
-						Hours:     0,
-						Come:      date,
-					})
-				}
-				msg.Text = fmt.Sprint(month)
+				day = service.Start(userId,bot,database)
+				msg.Text = fmt.Sprint(day)
 
 			case Come:
-				date := time.Now()
-				uuidMonth := uuid.Must(uuid.NewRandom())
-				if date.Day() == 1 {
-					database.Create(&model.Month{
-						ID:       uuidMonth,
-						UserID:   userId,
-						SumHours: 0,
-						Name:     date.Month().String(),
-					})
-				}
-				database.Last(&month)
-				database.Last(&day)
-
-				dayTime := time.Time(day.Come)
-
-				if dayTime.Day() == date.Day() && date.Month() == dayTime.Month() {
-					day.Hours = float64(day.Go.Hour())-float64(day.Come.Hour())
-					day.Come = date
-					database.Save(&day)
-				} else {
-					database.Create(&model.Day{
-						ID:        uuid.Must(uuid.NewRandom()),
-						UserID:    userId,
-						MonthID:   month.ID,
-						DayOfWeek: date.Weekday().String(),
-						Hours:     0,
-						Come:      date,
-					})
-				}
-
-				database.Last(&day)
-
+				
+				day = service.Come(userId,bot,database)
 				msg.Text = fmt.Sprint(day)
 
 			case Go:
