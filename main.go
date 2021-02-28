@@ -67,19 +67,18 @@ func main() {
 
 			userId := update.Message.From.ID
 
-			var month model.Month
 			var day model.Day
 
 			switch update.Message.Command() {
 			case "start":
 
 				msg.ReplyMarkup = numericKeyboard
-				day = service.Start(userId,bot,database)
+				day = service.Start(userId, bot, database)
 				msg.Text = fmt.Sprint(day)
 
 			case Come:
-				
-				day = service.Come(userId,bot,database)
+
+				day = service.Come(userId, bot, database)
 				msg.Text = fmt.Sprint(day)
 
 			case Go:
@@ -92,17 +91,7 @@ func main() {
 
 			case ShowAllInfo:
 
-				database.Last(&month)
-				var days []model.Day
-
-				database.Find(&days, "month_id = ?", month.ID)
-
-				var outputStr string
-				outputStr = outputStr + "| Day \t  \t  \t| Hours|\n"
-				for _, item := range days {
-					dateFormate := item.Come.Format("2006-01-02")
-					outputStr = outputStr + fmt.Sprintf(`| %s		| %d|`, dateFormate, int(item.Hours)) + "\n"
-				}
+				outputStr := service.ShowAllInfo(bot, database)
 
 				msg.Text = fmt.Sprint(outputStr)
 
