@@ -1,3 +1,5 @@
 .env
 /pgdata
 ./deploy.conf
+/node_modules
+./node_modules

@@ -26,7 +26,8 @@ Write a message to the bot **@officeHoursCheckerBot**
 2. start : 
 ```bash
 $ docker-compose up
-$ go run main.go
+$ pnpm install
+$ pnpm run start
 ```
 
 
