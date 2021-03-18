@@ -12,6 +12,7 @@ generator client {
 
 model User {
   id    String     @id @default(uuid())
+  telegramId String @unique
   name  String?
   months Month[]
 }
