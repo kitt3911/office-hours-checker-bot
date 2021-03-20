@@ -22,7 +22,7 @@ model Month {
   userId  String? 
   id  String @id @default(uuid())
   user  User?   @relation(fields: [userId], references: [id])
-  fullDate String @unique
+  fullDate String 
   name String
   day Day[]
   @@map("month")
@@ -32,7 +32,7 @@ model Day {
   monthId  String?
   id  String @id @default(uuid())
   month Month?   @relation(fields: [monthId], references: [id])
-  date  String @unique
+  date  String 
   come DateTime
   go DateTime
   workHours Int

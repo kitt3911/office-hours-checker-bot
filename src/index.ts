@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { Telegraf } from 'telegraf'
 import { botToken } from './config'
 import moment from 'moment'
+import { formatMonth } from './utils/formatDate'
 
 const prisma = new PrismaClient()
 
@@ -21,33 +22,59 @@ async function main() {
             })
         }
 
-        let thisDate = moment(new Date(), 'DD/MM/YYYY')
-        let month = thisDate.format('M')
-        let year = thisDate.format('YYYY')
-        const thisFormatDate = year + '/' + month
+        let thisDate = formatMonth()
         const findMonth = await prisma.month.findFirst({
             where: {
-                fullDate: thisFormatDate,
+                fullDate: thisDate.date,
                 user: findUser,
                 userId: findUser.id
             }
         })
 
-        if (!findMonth){
-           const modelMonth = await prisma.month.create({
-               data:{
-                   fullDate: thisFormatDate,
-                   userId: findUser.id,
-                   name: month
-               }
-           })
+        if (!findMonth) {
+              await prisma.month.create({
+                data: {
+                    fullDate: thisDate.date,
+                    userId: findUser.id,
+                    name: thisDate.month
+                }
+            })
         }
 
         ctx.reply(`Welcome ${findUser.name}`)
     })
 
-    bot.command("come", (ctx) => {
+    bot.hears(/(\d{2})\/((\d{2})|(\d{1}))\s\d/, async (ctx) => {
+        const setDay = ctx.match[1] + '/' + ctx.match[2]
+        const hours = ctx.match[3]
+        const formatDate = formatMonth(setDay)
+        console.log(formatDate)
+        const user = {
+            name: ctx.from.username,
+            telegramId: ctx.from.id
+        }
+        let findUser = await prisma.user.findFirst({
+            where: { telegramId: user.telegramId }
+        })
+        if (findUser) {
+            let findMonth = await prisma.month.findFirst({
+                where: {
+                    fullDate: formatDate.date,
+                    user: findUser,
+                    userId: findUser.id
+                }
+            })
+            if (!findMonth) {
+                findMonth = await prisma.month.create({
+                    data: {
+                        fullDate: formatDate.date,
+                        userId: findUser.id,
+                        name: formatDate.month
+                    }
+                })
+            }
 
+        }
     })
 
 
