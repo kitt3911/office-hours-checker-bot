@@ -3,3 +3,4 @@
 ./deploy.conf
 /node_modules
 ./node_modules
+/migrations
