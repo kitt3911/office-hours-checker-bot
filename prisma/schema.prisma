@@ -15,22 +15,26 @@ model User {
   telegramId String @unique
   name  String?
   months Month[]
+  @@map("user")
 }
 
 model Month {
-  userId  String?
+  userId  String? 
   id  String @id @default(uuid())
   user  User?   @relation(fields: [userId], references: [id])
+  fullDate String @unique
   name String
   day Day[]
+  @@map("month")
 }
 
 model Day {
   monthId  String?
   id  String @id @default(uuid())
   month Month?   @relation(fields: [monthId], references: [id])
+  date  String @unique
   come DateTime
   go DateTime
   workHours Int
-
+  @@map("day")
 }
