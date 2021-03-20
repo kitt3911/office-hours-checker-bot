@@ -35,6 +35,6 @@ model Day {
   date  String 
   come DateTime
   go DateTime
-  workHours Int
+  workHours Float
   @@map("day")
 }
