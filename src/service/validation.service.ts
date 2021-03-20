@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Context } from "telegraf";
+import { Day } from "../interfaces/day.interface";
 import { Month } from "../interfaces/month.interface";
 import { User } from "../interfaces/user.interface";
 import { formatMonth } from "../utils/formatDate";
@@ -36,3 +37,4 @@ export const validationMonth = async (prisma: PrismaClient,date?: string,userId?
 
   return findMonth
 }
+

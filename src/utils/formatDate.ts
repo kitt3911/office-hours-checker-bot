@@ -13,8 +13,15 @@ export const formatMonth = (date?: string):FormatDate => {
     }
     let month = thisDate.format('M')
     let year = thisDate.format('YYYY')
+    let day = thisDate.format('D')
     let thisFormatDate = year + '/' + month
     return {
-        date: thisFormatDate, month, year
+        date: thisFormatDate, month, year, day
     }
+}
+
+export const formatHours = (workHours: number): string => {
+    const min = Number(workHours.toFixed(0))/10
+    const hours = Number.parseInt(workHours.toString())
+    return `${hours}:${min}`
 }
