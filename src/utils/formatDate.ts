@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { FormatDate } from '../interfaces/formatDate.interface'
 
-export const formatMonth = (date?: string):FormatDate => {
+export const formatDate = (date?: string):FormatDate => {
     let thisDate: moment.Moment
     if (!date) {
         thisDate = moment(new Date(), 'DD/MM/YYYY')
@@ -15,8 +15,9 @@ export const formatMonth = (date?: string):FormatDate => {
     let year = thisDate.format('YYYY')
     let day = thisDate.format('D')
     let thisFormatDate = year + '/' + month
+    let thisFormatDayDate = thisFormatDate + '/' + day
     return {
-        date: thisFormatDate, month, year, day
+        localDate: thisFormatDate,fullDate:thisFormatDayDate, month, year, day
     }
 }
 

@@ -4,7 +4,7 @@ import { botToken } from './config'
 import { Day } from './interfaces/day.interface'
 import { createDay, findOneDay } from './service/day.service'
 import { validationMonth, validationUser } from './service/validation.service'
-import { formatHours } from './utils/formatDate'
+import { formatDate,formatHours } from './utils/formatDate'
 
 const prisma = new PrismaClient()
 
@@ -43,12 +43,16 @@ async function main() {
         }
         const validateUser = await validationUser(prisma,user)
         const validateMonth = await validationMonth(prisma,setDay,validateUser.id)
-        const day = await findOneDay(prisma,validateMonth.id) 
+        const day = await findOneDay(prisma,validateMonth.id,setDay) 
+        console.log(day)
     
         if(day){
             const formatDate = formatHours(day.workHours)
             ctx.reply(`date: ${day.date} \n time: ${formatDate}
             `)
+        }
+        else {
+            ctx.reply("Нет информации")
         }
 
     })
