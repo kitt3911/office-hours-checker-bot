@@ -13,9 +13,13 @@ export const getThisMonthController = async (bot: Telegraf) => {
         const user = await validationUser(userDto)
         const month = await validationMonth(user.id)
         const days = await getDayOnMonthService(user.id,month.id)
+        let daysToString: string = ""
+        days.map(item => {
+            daysToString = daysToString + `date: ${item.date} \n time: ${item.workHours} \n`
+        })
         console.log(days)
         if(days.length > 0){
-            ctx.reply(JSON.stringify(days))
+            ctx.reply(daysToString)
         }
         else{
             ctx.reply("нет информации")
