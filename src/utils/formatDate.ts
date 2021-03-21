@@ -21,7 +21,12 @@ export const formatMonth = (date?: string):FormatDate => {
 }
 
 export const formatHours = (workHours: number): string => {
-    const min = Number(workHours.toFixed(0))/10
-    const hours = Number.parseInt(workHours.toString())
+    const hours = Math.trunc(workHours)
+    const minNumber = ((workHours - hours)*60)
+    let min = minNumber.toString()
+    if(min.length === 1){
+        min = min + '0'
+    }
+
     return `${hours}:${min}`
 }

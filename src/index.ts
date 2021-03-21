@@ -47,9 +47,7 @@ async function main() {
     
         if(day){
             const formatDate = formatHours(day.workHours)
-            ctx.reply(`
-                date: ${day.date} /n,
-                ${formatDate}
+            ctx.reply(`date: ${day.date} \n time: ${formatDate}
             `)
         }
 
