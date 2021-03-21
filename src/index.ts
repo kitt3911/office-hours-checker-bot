@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { Telegraf } from 'telegraf'
 import { botToken, prisma } from './config'
 import { getDayController, setDayController } from './controllers/day.controller'
+import { getThisMonthController } from './controllers/month.controller'
 import { startController } from './controllers/strat.controller'
 
 
@@ -10,6 +11,7 @@ async function main() {
     await startController(bot)
     await setDayController(bot)
     await getDayController(bot)
+    await getThisMonthController(bot)
 
     bot.launch()
 }
