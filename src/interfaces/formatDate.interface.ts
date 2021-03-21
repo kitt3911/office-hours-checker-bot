@@ -1,5 +1,5 @@
 export interface FormatDate {
-    localDate: string,
+    monthAndYear: string,
     fullDate: string
     day: string
     month:string

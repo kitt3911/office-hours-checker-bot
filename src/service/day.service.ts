@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client"
+import { prisma } from "../config"
 import { Day } from "../interfaces/day.interface"
 import { formatDate } from "../utils/formatDate"
 
-export const findOneDay = async (prisma: PrismaClient,monthId?: string,date?: string):Promise<Day|null> => {
+export const findOneDay = async (monthId?: string,date?: string):Promise<Day|null> => {
     const format = formatDate(date)
     let findDay = await prisma.day.findFirst({
         where: {
@@ -13,14 +14,16 @@ export const findOneDay = async (prisma: PrismaClient,monthId?: string,date?: st
     return findDay
 }
 
-export const createDay = async (prisma: PrismaClient,monthId: string,workHours: number,date: string): Promise<Day> => {
+export const createDay = async (monthId: string,workHours: number,date: string): Promise<Day> => {
 
+    const format = formatDate(date)
     const findDay = await prisma.day.findFirst({
         where: {
-            monthId
+            monthId,
+            date: format.fullDate
         }
     })
-    const format = formatDate(date)
+    console.log(findDay)
     if(findDay){
         return await prisma.day.update({
            where: {

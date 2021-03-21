@@ -17,7 +17,7 @@ export const formatDate = (date?: string):FormatDate => {
     let thisFormatDate = year + '/' + month
     let thisFormatDayDate = thisFormatDate + '/' + day
     return {
-        localDate: thisFormatDate,fullDate:thisFormatDayDate, month, year, day
+        monthAndYear: thisFormatDate,fullDate:thisFormatDayDate, month, year, day
     }
 }
 

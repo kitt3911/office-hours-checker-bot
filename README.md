@@ -17,6 +17,21 @@ Write a message to the bot **@officeHoursCheckerBot**
 - <code><button height="27">/go</button></code> - Mark that I left ( stops counting time )
 - <code><button height="27">/show</button></code> - Show hours for the day
 - <code><button height="27">/show_all_info</button></code> - show the work schedule for the month
+- <code><button height="27">get {mm/dd}</button></code> - show the work schedule for the day {mm/dd}
+- <code><button height="27">set {mm/dd} {work hour}</button></code> - set the work schedule for the day {mm/dd} {workhour}
+
+## Example :
+
+```javascript
+set 02/01 8
+get 02/01
+```
+
+Result:
+```
+date: 2021/2/1 
+time: 5:00
+```
 
 ## For contributors : 
 
