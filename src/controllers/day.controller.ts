@@ -3,7 +3,7 @@ import { Telegraf } from "telegraf"
 import { prisma } from "../config"
 import { createDay, findOneDay } from "../service/day.service"
 import { validationMonth, validationUser } from "../service/validation.service"
-import { convertMinToDecimal, formatHours } from "../utils/formatDate"
+import { convertMinToDecimal, formatDate, formatHours } from "../utils/formatDate"
 
 export const getDayController = async (bot: Telegraf) => {
     bot.hears(/get\s(\d{2})\/((\d{2})|(\d{1}))/, async (ctx) => {
@@ -40,7 +40,7 @@ export const setDayController = async (bot: Telegraf) => {
         }
         const validateUser = await validationUser(user)
         const validateMonth = await validationMonth(validateUser.id, setDay)
-        const newDay = await createDay(validateMonth.id, Number(hours), setDay)
+        const newDay = await createDay(validateMonth.id,setDay,hours)
         ctx.reply(JSON.stringify(newDay))
     })
 }

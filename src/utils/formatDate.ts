@@ -23,13 +23,12 @@ export const formatDate = (date?: string):FormatDate => {
 
 export const formatHours = (workHours: number): string => {
     const hours = Math.trunc(workHours)
-    const minNumber = ((workHours - hours)*60)
-    let min = minNumber.toString()
-    if(min.length === 1){
-        min = min + '0'
+    let minNumber = (Math.fround((workHours - hours)*60)).toString()
+    if(minNumber.length === 1){
+        minNumber = minNumber + '0'
     }
 
-    return `${hours}:${min}`
+    return `${hours}:${minNumber}`
 }
 
 export const convertMinToDecimal = (str: string) : number => {

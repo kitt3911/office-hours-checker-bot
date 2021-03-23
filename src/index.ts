@@ -12,7 +12,6 @@ async function main() {
     await setDayController(bot)
     await getDayController(bot)
     await getThisMonthController(bot)
-
     bot.launch()
 }
 
