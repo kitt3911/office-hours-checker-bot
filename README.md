@@ -30,7 +30,17 @@ get 02/01
 Result:
 ```
 date: 2021/2/1 
-time: 5:00
+time: 8:00
+```
+```javascript
+set 02/01 8:30
+get 02/01
+```
+
+Result:
+```
+date: 2021/2/1 
+time: 8:30
 ```
 
 ## For contributors : 
@@ -41,6 +51,7 @@ time: 5:00
 2. start : 
 ```bash
 $ docker-compose up
+$ prisma migrate dev --name init
 $ pnpm install
 $ pnpm run start
 ```
