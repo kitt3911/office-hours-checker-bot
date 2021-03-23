@@ -3,6 +3,7 @@ import { Telegraf } from "telegraf";
 import { User } from "../interfaces/user.interface";
 import { getDayOnMonthService } from "../service/month.service";
 import { validationMonth, validationUser } from "../service/validation.service";
+import { formatDate, formatHours } from "../utils/formatDate";
 
 export const getThisMonthController = async (bot: Telegraf) => {
     bot.command('show_all_info',async ctx => {
@@ -15,7 +16,7 @@ export const getThisMonthController = async (bot: Telegraf) => {
         const days = await getDayOnMonthService(user.id,month.id)
         let daysToString: string = ""
         days.map(item => {
-            daysToString = daysToString + `date: ${item.date} \n time: ${item.workHours} \n`
+            daysToString = daysToString + `date: ${item.date} \n time: ${item.workHours ? formatHours(item.workHours) : '0'} \n`
         })
         console.log(days)
         if(days.length > 0){
