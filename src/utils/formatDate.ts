@@ -31,3 +31,7 @@ export const formatHours = (workHours: number): string => {
 
     return `${hours}:${min}`
 }
+
+export const convertMinToDecimal = (str: string) : number => {
+    return Number(str) / 60;
+}
