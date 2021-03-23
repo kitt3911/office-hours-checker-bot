@@ -30,7 +30,7 @@ export const getDayController = async(bot: Telegraf)=>{
 
 
 export const setDayController = async(bot: Telegraf)=>{
-    bot.hears(/set\s(\d{2})\/((\d{2})|(\d{1}))\s(\d)/, async (ctx) => {
+    bot.hears(/set\s(\d{2})\/((\d{2})|(\d{1}))\s(10|11|12|[1-9]):([0-5][0-9])$/, async (ctx) => {
         const setDay = ctx.match[1] + '/' + ctx.match[2]
         const hours = ctx.match[5]
         const user = {
@@ -39,7 +39,8 @@ export const setDayController = async(bot: Telegraf)=>{
         }
         const validateUser = await validationUser(user)
         const validateMonth = await validationMonth(validateUser.id,setDay)
-        const newDay = await createDay(validateMonth.id,Number(hours),setDay)
-        ctx.reply(JSON.stringify(newDay))
+       const newDay = await createDay(validateMonth.id,Number(hours),setDay)
+       // ctx.reply(JSON.stringify(newDay))
+       ctx.reply(ctx.match[5] + ctx.match[6] + ' ')
     })
 }
