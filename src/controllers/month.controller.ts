@@ -14,9 +14,10 @@ export const getThisMonthController = async (bot: Telegraf) => {
         const user = await validationUser(userDto)
         const month = await validationMonth(user.id)
         const days = await getDayOnMonthService(user.id,month.id)
-        let daysToString: string = ""
+        let daysToString: string = `
+        +========+========+\n|   Date      |     Time     |\n`
         days.map(item => {
-            daysToString = daysToString + `date: ${item.date} \n time: ${item.workHours ? formatHours(item.workHours) : '0'} \n`
+            daysToString = daysToString + `|   ${item.date}  |     ${item.workHours ? formatHours(item.workHours) : '0'}    |\n`
         })
         console.log(days)
         if(days.length > 0){
