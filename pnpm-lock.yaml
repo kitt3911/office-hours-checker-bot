@@ -1,5 +1,5 @@
 dependencies:
-  '@prisma/client': 2.19.0_prisma@2.19.0
+  '@prisma/client': 2.19.0_prisma@2.20.1
   datejs: 1.0.0-rc3
   dotenv: 8.2.0
   moment: 2.29.1
@@ -7,16 +7,16 @@ dependencies:
   telegraf: 4.3.0
 devDependencies:
   '@types/datejs': 0.0.31
-  '@types/node': 14.14.35
-  prisma: 2.19.0
+  '@types/node': 14.14.37
+  prisma: 2.20.1
   ts-node: 9.1.1_typescript@4.2.3
   typescript: 4.2.3
 lockfileVersion: 5.2
 packages:
-  /@prisma/client/2.19.0_prisma@2.19.0:
+  /@prisma/client/2.19.0_prisma@2.20.1:
     dependencies:
       '@prisma/engines-version': 2.19.0-39.c1455d0b443d66b0d9db9bcb1bb9ee0d5bbc511d
-      prisma: 2.19.0
+      prisma: 2.20.1
     dev: false
     engines:
       node: '>=10.4'
@@ -32,19 +32,19 @@ packages:
     dev: false
     resolution:
       integrity: sha512-NzhbwC4iMbRQwJxdhNQX6eaVcOuNGtHRk6aesWE4KMf/YmlW5kfi3HDy7WZ/C4P0Iyn9oURDuk+xZV6QDUVjTw==
-  /@prisma/engines/2.19.0-39.c1455d0b443d66b0d9db9bcb1bb9ee0d5bbc511d:
+  /@prisma/engines/2.20.0-26.60ba6551f29b17d7d6ce479e5733c70d9c00860e:
     dev: true
     requiresBuild: true
     resolution:
-      integrity: sha512-rEWpaG7wZvPuWJC5SwkBB/Iwue//oC5yv58Mse7r+ibtgkA7vGdWc1bFDQ32DT9tDL5WSC6bBwqEASGV/1Gm1Q==
+      integrity: sha512-zOWETm7DTRvlwf/CekPNSeJe6EC5bn2IFexd74wM9zgBXCZo+1sMDuNGtCqIt4Rzv8CcimEgyzrEFVq0LPV8qg==
   /@types/datejs/0.0.31:
     dev: true
     resolution:
       integrity: sha512-Y8z5tvhPcjWBbGByO/PoDnzi4MiVO5Aimh45b7N5iEO7qN8grAfUQYfWIQsr5ugb1IGlPZX4FcMzH6Lb0WBpmw==
-  /@types/node/14.14.35:
+  /@types/node/14.14.37:
     dev: true
     resolution:
-      integrity: sha512-Lt+wj8NVPx0zUmUwumiVXapmaLUcAk3yPuHCFVXras9k5VT9TdhJqKqGVUQCD60OTMCl0qxJ57OiTL0Mic3Iag==
+      integrity: sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
   /abort-controller/3.0.0:
     dependencies:
       event-target-shim: 5.0.1
@@ -154,16 +154,16 @@ packages:
       node: '>=10'
     resolution:
       integrity: sha512-+/wmHtzJuWii1sXn3HCuH/FTwGhrp4tmJTxSKJbfS+vkipci6osxXM5mY0jUiRzWKMTgUT8l7HFbeSwZAynqHw==
-  /prisma/2.19.0:
+  /prisma/2.20.1:
     dependencies:
-      '@prisma/engines': 2.19.0-39.c1455d0b443d66b0d9db9bcb1bb9ee0d5bbc511d
+      '@prisma/engines': 2.20.0-26.60ba6551f29b17d7d6ce479e5733c70d9c00860e
     dev: true
     engines:
       node: '>=10.4'
     hasBin: true
     requiresBuild: true
     resolution:
-      integrity: sha512-iartCNVrtR4XT20ABN3zrSi3R/pCBe75Y0ZH8681QIGm8qjRQzf3DnbscPZgZ9iY4KFuVxL8ZrBQVDmRhpN0EQ==
+      integrity: sha512-zyPvJSUfJrmciP2D/4aUrsyIefiH8AIJUeuq1a0X1df1AFw9QQ+ata/7VQdoP+RIQHnCb6Kln9kqfUw/fieljw==
   /safe-compare/1.1.4:
     dependencies:
       buffer-alloc: 1.2.0
@@ -242,13 +242,13 @@ packages:
       integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
 specifiers:
   '@prisma/client': ^2.19.0
-  '@types/datejs': ^0.0.31
-  '@types/node': ^14.14.35
+  '@types/datejs': 0.0.31
+  '@types/node': 14.14.37
   datejs: ^1.0.0-rc3
   dotenv: ^8.2.0
   moment: ^2.29.1
   momentjs: ^2.0.0
-  prisma: ^2.19.0
+  prisma: 2.20.1
   telegraf: ^4.3.0
-  ts-node: ^9.1.1
-  typescript: ^4.2.3
+  ts-node: 9.1.1
+  typescript: 4.2.3
