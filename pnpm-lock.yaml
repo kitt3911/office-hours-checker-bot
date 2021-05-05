@@ -5,7 +5,7 @@ specifiers:
   '@types/datejs': 0.0.31
   '@types/node': 14.14.37
   datejs: ^1.0.0-rc3
-  dotenv: ^8.2.0
+  dotenv: ^9.0.0
   moment: ^2.29.1
   momentjs: ^2.0.0
   prisma: 2.20.1
@@ -16,7 +16,7 @@ specifiers:
 dependencies:
   '@prisma/client': 2.19.0_prisma@2.20.1
   datejs: 1.0.0-rc3
-  dotenv: 8.2.0
+  dotenv: 9.0.0
   moment: 2.29.1
   momentjs: 2.0.0
   telegraf: 4.3.0
@@ -117,9 +117,9 @@ packages:
     engines: {node: '>=0.3.1'}
     dev: true
 
-  /dotenv/8.2.0:
-    resolution: {integrity: sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==}
-    engines: {node: '>=8'}
+  /dotenv/9.0.0:
+    resolution: {integrity: sha512-yy3x9XjojW8ROTBePD25AcMoHqGHsvHmtfw8QWlpEXyMMXXPj6brUA464AptUvHuTPRmNz6Sd3ZLNLeJl6dHJA==}
+    engines: {node: '>=10'}
     dev: false
 
   /event-target-shim/5.0.1:
